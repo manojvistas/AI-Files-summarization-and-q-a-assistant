@@ -1,0 +1,64 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2
+    volumes:
+      - ./surreal_data:/mydata
+    environment:
+      - SURREAL_EXPERIMENTAL_GRAPHQL=true
+    command: start --log info --user root --pass root rocksdb:/mydata/mydatabase.db
+    pull_policy: always
+    user: root
+    restart: always
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    dns:
+      - 8.8.8.8
+    ports:
+      - "5055:5055"
+    env_file:
+      - ./docker.env
+    depends_on:
+      - surrealdb
+      - ollama
+    volumes:
+      - ./notebook_data:/app/data
+    restart: always
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    dns:
+      - 8.8.8.8
+    ports:
+      - "8502:8502"
+    env_file:
+      - ./docker.env
+    depends_on:
+      - api
+    volumes:
+      - ./notebook_data:/app/data
+    restart: always
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    dns:
+      - 8.8.8.8
+    depends_on:
+      - api
+    env_file:
+      - ./docker.env
+    volumes:
+      - ./notebook_data:/app/data
+    restart: always
+  ollama:
+    build:
+      context: .
+      dockerfile: ollama.Dockerfile
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    restart: always

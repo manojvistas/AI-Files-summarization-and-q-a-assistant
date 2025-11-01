@@ -1,0 +1,15 @@
+-- Add a default summarization transformation
+DEFINE TABLE transformation SCHEMAFULL;
+DEFINE FIELD name ON TABLE transformation TYPE string;
+DEFINE FIELD title ON TABLE transformation TYPE string;
+DEFINE FIELD description ON TABLE transformation TYPE string;
+DEFINE FIELD prompt ON TABLE transformation TYPE string;
+DEFINE FIELD apply_default ON TABLE transformation TYPE bool;
+
+-- Create the default summarization transformation
+CREATE transformation:summary SET
+    name = 'summary',
+    title = 'Summarize',
+    description = 'Create a concise summary of the content.',
+    prompt = 'Provide a brief, one-paragraph summary of the following text, capturing the main points and key takeaways.',
+    apply_default = true;
