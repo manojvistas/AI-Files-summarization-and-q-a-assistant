@@ -11,6 +11,9 @@ venv/
 .env
 .env.*
 
+# Project-specific dev artifacts
+.claude/
+
 # Node / frontend
 node_modules/
 dist/
